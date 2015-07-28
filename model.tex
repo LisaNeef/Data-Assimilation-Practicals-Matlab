@@ -1,3 +1,15 @@
-\begin{itemize}
-	\item The 3-variable model of \citet{Lorenz1963} is frequently used to test data assimilation algorithms because, like the real atmosphere, it displays deterministic chaos. 
-\end{itemize}
+The 3-variable model of \citet{Lorenz1963} is frequently used to test data assimilation algorithms because, like the real atmosphere, it displays deterministic chaos. 
+\begin{eqnarray}
+\frac{dx}{dt} &=& f_1(x,y) = \sigma (y-x) \label{eq:x} \\
+\frac{dy}{dt} &=& f_2(x,y,z) = \rho x - y - xz \label{eq:y} \\
+\frac{dz}{dt} &=& f_3(x,y,z) = xy-\beta z. \label{eq:z} \\
+\end{eqnarray}
+
+We will use the following parameters:\\
+\centerline{
+\begin{tabular}{ll}
+	$\sigma = 10$ 	& the Prandtl number \\
+	$\rho = 28$ 	& the normalized Rayleigh number \\
+	$\beta = 8/3$ 	& a nondimensional wavenumber.
+\end{tabular}
+}
