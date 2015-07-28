@@ -1,10 +1,10 @@
-function [XT,XA,t,ET] = enkf_l63(tobs,Tend,N)
+function enkf_l63(tobs,Tend,N)
 %% EnKF_l63.m
 %
 % Run the Lorenz 1963 model and 
-% assimilate observations using the Ensemble Kalman Filterq
+% assimilate observations using the Ensemble Kalman Filter
 
-% Lisa Neef, 17 June 2013
+% Lisa Neef; started 17 June 2013
 %
 % INPUTS:
 %   tobs: the observation interval
@@ -21,7 +21,7 @@ function [XT,XA,t,ET] = enkf_l63(tobs,Tend,N)
 %% Other assimilation Parameters:
 
 sig0 	= 0.5;	% initial forecast error variance
-sig_obs	= 0.01;	% observation errror covariance
+sig_obs	= 0.5;	% observation errror covariance
 
 %% Model Parameters
 
@@ -51,7 +51,6 @@ YOBS = zeros(3,nT)+NaN;
 %% initial conditions
 XT(:,1) = xt0;		% initial truth
 xf = xf0;		% initial forecast
-Pf = sig0*eye(3);	%
 
 %% generate the initial ensemble 
 for iens = 1:N
@@ -117,13 +116,21 @@ for k = 1:nT-1
 
 end
 
+%---------------PLOTTING----------------------------------
 
 %% Compute a few other output quantities
 XA = squeeze(mean(XENS,1));
 
 %% Produce Plots!
-
 YL = {'x','y','z'};
+
+%% definte some plot settings
+LW = 2;		% line width
+tcol = [0,0,0];
+acol = [217,95,2]/256.0;
+acol = [102,166,30]/256.0;
+ocol = [241,41,138]/256.0;
+ecol = .7*ones(1,3);
 
 
 % plot the state analysis versis truth
@@ -132,16 +139,21 @@ h = zeros(1,4);  % legend handle
 T = ones(N,1)*t;
 for ic = 1:3
   subplot(3,1,ic)
-    dum  = plot(T,squeeze(XENS(:,ic,:)),'Color',0.7*ones(1,3));
+    ens = transpose(squeeze(XENS(:,ic,:)));
+    dum  = plot(transpose(T),ens,'Color',ecol,'LineWidth',1);
     hold on
     h(1) = dum(1);
-    h(2) = plot(t,XT(ic,:),'k');
-    h(3) = plot(t,XA(ic,:),'b');
-    h(4) = plot(t,YOBS(ic,:),'ro');
-    xlabel('time')
+    h(2) = plot(t,XT(ic,:),'Color',tcol,'LineWidth',LW);
+    h(3) = plot(t,XA(ic,:),'Color',acol,'LineWidth',LW);
+    h(4) = plot(t,YOBS(ic,:),'o','Color',ocol,'MarkerSize',5,'LineWidth',LW);
+    if ic == 1
+	    title('Lorenz 1963 Model - State Variables')
+    end
+    if ic == 3
+	    xlabel('time')
+	    legend(h, 'ensemble','truth','analysis','obs','Location','SouthOutside','Orientation','Horizontal')
+    end
     ylabel(YL(ic))
-    legend(h, 'ensemble','truth','analysis','obs')
-    title('Lorenz 1963 Model')
 end
 
 % plot the estimated and true errors
@@ -150,23 +162,29 @@ EA = sqrt(S);
 figure(2),clf
 for ic = 1:3
   subplot(3,1,ic)
-    semilogy(t,ET(ic,:),'k',t,EA(ic,:),'b')
-    xlabel('time')
+    h = zeros(1,2);
+    h(1) = semilogy(t,ET(ic,:),'Color',tcol,'LineWidth',LW);
+    hold on
+    h(2) = semilogy(t,EA(ic,:),'Color',acol,'LineWidth',LW);
     ylabel(YL(ic))
-    legend('true error','analysis error')
-    title('Errors')
+    if ic == 1
+	    title('Lorenz 1963 Model - RMSE')
+    end
+    if ic == 3
+	    xlabel('time')
+	    legend(h, 'truth','analysis','Location','SouthOutside','Orientation','Horizontal')
+    end
 end
 
-fig_name_1 = ['lorenz_EnKF_tobs',num2str(tobs),'_N',num2str(N),'.png'];
-fig_name_2 = ['lorenz_EnKF_tobs',num2str(tobs),'_N',num2str(N),'_error.png'];
-pw1 = 10;
-ph1 = 10;
 
 
 %% Export Plots
-
-exportfig(1,fig_name_1,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
-exportfig(2,fig_name_2,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
+%fig_name_1 = ['lorenz_EnKF_tobs',num2str(tobs),'_N',num2str(N),'.png'];
+%fig_name_2 = ['lorenz_EnKF_tobs',num2str(tobs),'_N',num2str(N),'_error.png'];
+%pw1 = 10;
+%ph1 = 10;
+%exportfig(1,fig_name_1,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
+%exportfig(2,fig_name_2,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
 
 
 
