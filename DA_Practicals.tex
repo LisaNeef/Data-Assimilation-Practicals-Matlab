@@ -1,0 +1,65 @@
+\documentclass[a4paper,12pt,twoside]{article}
+
+\usepackage{fancyhdr}
+\usepackage{soul} % this is for highlighting things that need changes
+\usepackage[usenames]{color}
+\usepackage{natbib}
+\usepackage[letterpaper, margin=0.75in, headsep=.5in,bottom=1.2in,includehead]{geometry}
+\usepackage[xetex]{graphicx}
+\usepackage{fontspec,xunicode}
+\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\setmainfont[Scale=.95]{Liberation Sans}
+
+
+\author{Lisa Neef}
+\title{Four Dimensional Data Assimilation Practical Exercises}
+
+\pagestyle{fancy}
+\makeatletter
+\let\runauthor\@author
+\let\runtitle\@title
+\makeatother
+
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+		   {-3.5ex \@plus -1ex \@minus -.2ex}%
+	      {2.3ex \@plus.2ex}%
+		 {\normalfont\scshape}}
+\renewcommand\subsection{\@startsection {subsection}{1}{\z@}%
+		   {-3.5ex \@plus -1ex \@minus -.2ex}%
+	      {2.3ex \@plus.2ex}%
+		 {\normalfont\textbf}}
+\renewcommand\subsubsection{\@startsection {subsubsection}{1}{\z@}%
+		   {-3.5ex \@plus -1ex \@minus -.2ex}%
+	      {2.3ex \@plus.2ex}%
+		 {\normalfont\textbf}}
+\makeatother
+
+
+\bibliographystyle{abbrvnat} 
+
+\lhead{\textbf{\runauthor} \\ lneef@geomar.de \\ \texttt{https://github.com/LisaNeef}}
+\rhead{\textbf{\runtitle} \\ Advanced Topics in Meteorology: Data Assimilation \\ Blockkurs 2015}
+
+\begin{document}
+\centerline{}
+\centerline{\textbf{\runtitle}}
+\frenchspacing
+
+\section{The 1963 Lorenz Model: Nonlinear Dynamics and Sensitivity to Initial Conditions}
+\input{model.tex}
+
+\section{The Ensemble Kalman Filter: How many forecasts do we need to capture the right statistics?}
+\input{enkf.tex}
+
+\section{4D-Var: How far can the linearity assumption go?}
+\input{4dvar.tex}
+
+\section{EnKF vs 4D-Var in Different Regimes of Linearity}
+\input{comparison.tex}
+
+
+\bibliography{everything}
+
+ 
+\end{document}
