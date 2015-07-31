@@ -1,4 +1,4 @@
-function enkf_l63(tobs,Tend,N)
+function enkf_l63(E)
 %% EnKF_l63.m
 %
 % Run the Lorenz 1963 model and 
@@ -6,67 +6,46 @@ function enkf_l63(tobs,Tend,N)
 
 % Lisa Neef; started 17 June 2013
 %
-% INPUTS:
-%   tobs: the observation interval
-%   Tend: the model integration time
-%   N: ensemble size
-%
-% OUTPUTS:
-%   XT: the 3-variable true state
-%   XA: the 3-variable analysis state (the mean of the ensemble)
-%   t: the time array
-%   ET: the true error
+% INPUT:
+%   E: a Matlab structure that holds all the model and assimilation
+%	parameters. It is generated using E = set_enkf_inputs
 %-----------------------------------------------------------
 
-%% Other assimilation Parameters:
 
-sig0 	= 0.5;	% initial forecast error variance
-sig_obs	= 0.5;	% observation errror covariance
-
-%% Model Parameters
-
-sigma 	= 10;
-rho	= 28;
-beta	= 8/3;
-dt 	= 0.01;
-
-%% Initial conditions
-
-% initial true state
-xt0 = zeros(3,1);
-xt0(1) =  1.508870;
-xt0(2) = -1.531271;
-xt0(3) = 25.46091 ;
-
-xf0 = xt0+sig0*rand(3,1);
+%% extract the individual assimilation parameters from E
+sigma 	= E.sigma;
+rho 	= E.rho;
+beta 	= E.beta;
+dt 	= E.dt;
+xt0 	= E.xt0;
+xf0 	= E.xf0;
+sig0 	= E.sig0;
+sig_obs = E.sig_obs;
+N 	= E.N;
+Tend 	= E.Tend;
+tobs 	= E.tobs;
 
 %% Initialize arrays to hold everything
-t = 1:dt:Tend;
-nT = length(t);
-XT = zeros(3,nT)+NaN;	% array to hold the true state in time
-XENS = zeros(N,3,nT)+NaN;	% array to hold the ensemble
-S  = zeros(3,nT)+NaN;	% array to hold analysis error variance in time
-YOBS = zeros(3,nT)+NaN;
+t 	= 1:dt:Tend;
+nT 	= length(t);
+XT 	= zeros(3,nT)+NaN;	% array to hold the true state in time
+XENS 	= zeros(N,3,nT)+NaN;	% array to hold the ensemble
+S  	= zeros(3,nT)+NaN;	% array to hold analysis error variance in time
+YOBS 	= zeros(3,nT)+NaN;
 
 %% initial conditions
-XT(:,1) = xt0;		% initial truth
-xf = xf0;		% initial forecast
-
-%% generate the initial ensemble 
+XT(:,1) = xt0;			% initial truth
+xf 	= xt0+sig0*rand(3,1);	% initial forecast
 for iens = 1:N
   XENS(iens,:,1) = xf0 + sig0*randn(3,1);
 end
-
-% this is the initial forecast ensemble
-xfens = squeeze(XENS(:,:,1));
 
 %% Define other matrices needed in the assimilation
 H = eye(3);
 R = sig_obs*eye(3);
 
-
 %% Loop in time
-
+xfens = squeeze(XENS(:,:,1));
 for k = 1:nT-1
 
   % observations?
@@ -185,7 +164,6 @@ end
 %ph1 = 10;
 %exportfig(1,fig_name_1,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
 %exportfig(2,fig_name_2,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
-
 
 
 
