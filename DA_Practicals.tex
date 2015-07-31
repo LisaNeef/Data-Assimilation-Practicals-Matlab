@@ -1,5 +1,6 @@
 \documentclass[a4paper,12pt,twoside]{article}
 
+% packages 
 \usepackage{fancyhdr}
 \usepackage{soul} % this is for highlighting things that need changes
 \usepackage[usenames]{color}
@@ -10,45 +11,54 @@
 \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
 \setmainfont[Scale=.95]{Liberation Sans}
 
-
+% author information 
 \author{Lisa Neef}
 \title{Four Dimensional Data Assimilation Practical Exercises}
 
+% page formatting
 \pagestyle{fancy}
 \makeatletter
 \let\runauthor\@author
 \let\runtitle\@title
 \makeatother
 
+% nice colors 
+\definecolor{sage}{RGB}{27,158,119}
+\definecolor{peagreen}{RGB}{102,166,30}
+
+% reformat the sections 
 \makeatletter
 \renewcommand\section{\@startsection {section}{1}{\z@}%
 		   {-3.5ex \@plus -1ex \@minus -.2ex}%
 	      {2.3ex \@plus.2ex}%
-		 {\normalfont\scshape}}
+		 {\normalfont\textbf}}
 \renewcommand\subsection{\@startsection {subsection}{1}{\z@}%
 		   {-3.5ex \@plus -1ex \@minus -.2ex}%
 	      {2.3ex \@plus.2ex}%
-		 {\normalfont\textbf}}
+		 {\normalfont\textit}}
 \renewcommand\subsubsection{\@startsection {subsubsection}{1}{\z@}%
 		   {-3.5ex \@plus -1ex \@minus -.2ex}%
 	      {2.3ex \@plus.2ex}%
-		 {\normalfont\textbf}}
-\renewcommand\thesubsubsection{\underline{Experiment \arabic{subsubsection}:}}
+		 {\normalfont}}
+ \renewcommand\thesubsubsection{\color{peagreen}{Exercise \thesubsection.\arabic{subsubsection}:}}
 \makeatother
 
 
-\bibliographystyle{abbrvnat} 
 
+% create headers
 \lhead{\textbf{\runauthor} \\ lneef@geomar.de \\ \texttt{https://github.com/LisaNeef}}
 \rhead{\textbf{\runtitle} \\ Advanced Topics in Meteorology: Data Assimilation \\ Blockkurs 2015}
 
-%% math shortcuts
+% math shortcuts
 %\newcommand{\T}{^\text{T}}
 \newcommand{\wv}{{\bf w}}
 \newcommand{\vv}{{\bf v}}
 \newcommand{\yv}{{\bf y}}
 \newcommand{\xv}{{\bf x}}
 \newcommand{\tobs}{\Delta t^{obs}}
+
+% bib info
+\bibliographystyle{abbrvnat} 
 
 %-------------------------------------------------------------------------------------------
 

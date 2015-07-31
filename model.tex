@@ -2,14 +2,38 @@ The 3-variable model of \citet{Lorenz1963} is frequently used to test data assim
 \begin{eqnarray}
 \frac{dx}{dt} &=& f_1(x,y) = \sigma (y-x) \label{eq:x} \\
 \frac{dy}{dt} &=& f_2(x,y,z) = \rho x - y - xz \label{eq:y} \\
-\frac{dz}{dt} &=& f_3(x,y,z) = xy-\beta z. \label{eq:z} \\
+\frac{dz}{dt} &=& f_3(x,y,z) = xy-\beta z. \label{eq:z} 
 \end{eqnarray}
-
-We will use the following parameters:\\
+%
+We will use this model in a set of data assimilation experiments, with the following parameters:\\
 \centerline{
 \begin{tabular}{ll}
-	$\sigma = 10$ 	& the Prandtl number \\
-	$\rho = 28$ 	& the normalized Rayleigh number \\
-	$\beta = 8/3$ 	& a nondimensional wavenumber.
+	$\sigma = 10$ 	& --the Prandtl number \\
+	$\rho = 28$ 	& --the normalized Rayleigh number \\
+	$\beta = 8/3$ 	& --a nondimensional wavenumber.
 \end{tabular}
 }
+\\
+The Matlab program \texttt{EnKF\_l63.m} runs the Lorenz model forward given a set of initial conditions, along with a forecast ensemble. 
+It also runs an optional ensemble Kalman filter (EnKF) that assimilates regularly-spaced observations of some or all the model variables, but first we'll focus on the model.
+%
+The model and assimilation inputs are set in \texttt{set\_enkf\_inputs\_template.m}.
+Copy this file to a new file called \texttt{set\_enkf\_inputs.m},
+then open this file in an editor and set \texttt{run\_filter} to zero.
+Now 
+\begin{verbatim}
+> E = set_enkf_inputs
+\end{verbatim}
+sets the input variables and parameters. 
+The output, $E$, is a matlab structure that contains all the model and assimilation parameters needed to run the EnKF. 
+Now to run the model, type
+\begin{verbatim}
+> EnKF_l63(E)
+\end{verbatim}
+Try runnning the model with a few different initial conditions (by re-running \texttt{set\_enkf\_inputs.m}) to get an idea of the overall behavior of the model. 
+You'll see that the Lorenz model, like the weather, is chaotic -- small changes in the initial conditions become huge changes down the line. 
+
+You'll see that the ensemble (gray) eventually separates so much from the truth that its mean (green) no longer looks like a typical state of the Lorenz model (i.e. it's no longer on the "strange attractor" of the model). 
+If the Lorenz model was a model of the weather, taking the ensemble mean as a weather forecast would be a pretty bad idea -- not only would it be far from the truth, it wouldn't even be physical. 
+Fortunately, in the real world we have observations of the weather to correct our forecast models and bring them closer to the truth. 
+This will be illustrated in the next section. 

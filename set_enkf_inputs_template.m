@@ -16,12 +16,13 @@ beta	= 8/3;
 dt 	= 0.01;
 
 %% ASSIMILATION PARAMETERS
-sig0 	= 0.5;	% initial forecast error variance
-sig_obs	= 0.5;	% observation errror covariance
-N	= 10;	% ensemble size
-Tend	= 30;	% total integration time
-tobs 	= 3.0;	% observation interval 
-localize = 0;	% set to 1 to use only the diagonals of the covariance matrix
+run_filter 	= 0;	% set to 1 to run the EnKF
+sig0 		= 0.5;	% initial forecast error variance
+sig_obs		= 0.5;	% observation errror covariance
+N		= 10;	% ensemble size
+Tend		= 30;	% total integration time
+tobs 		= 3.0;	% observation interval 
+localize 	= 1;	% set to 1 to use only the diagonals of the covariance matrix
 
 %% OBSERVATION SETTINGS
 obsx 	= 1;	% set to 1 to observe variable x
@@ -34,9 +35,9 @@ obs_meanxz	= 0;	% set to 1 to observe the mean of x and z
 
 %% INITIAL CONDITIONS
 xt0 = zeros(3,1);
-xt0(1) = 5*randn(1);	% initial true value for x
-xt0(2) = 5*randn(1);	% initial true value for y
-xt0(3) = 5*randn(1);	% initial true value for z
+xt0(1) = 10*randn(1);	% initial true value for x
+xt0(2) = 10*randn(1);	% initial true value for y
+xt0(3) = 10*randn(1);	% initial true value for z
 
 xf0 = zeros(3,1);
 xf0 = xt0 + sig0*randn(3,1);	% initial vector for forecast
@@ -56,6 +57,7 @@ E = struct('sigma',sigma,...
 		'obs_meanxz',obs_meanxz,...
 		'xt0',xt0,...
 		'xf0',xf0,...
+		'run_filter',run_filter,...
 		'sig0',sig0,...
 		'sig_obs',sig_obs,...
 		'N',N,...

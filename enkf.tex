@@ -1,54 +1,46 @@
-\hl{Insert description of how the code works and what the various input options are here.}
-
 
 %---------------------------------------------------------------------------------
-\subsection{How many ensemble members are needed to capture the right statistics?}
-\subsubsection{Run the filter with observations of all three variables and $\tobs = 3$. Try out various ensemble sizes.}
+\subsection{How much information is needed to capture the right statistics?}
+
+Now turn on the EnKF assimilation by setting \texttt{run\_filter=1} in \texttt{set\_enkf\_inputs.m}. 
+Other settings in for the filter are explained in the comments of this program. 
+Here we will test different values of the observation interval (\texttt{tobs}) and ensemble size (\texttt{N}).
+
+\subsubsection{Run the filter with various ensemble sizes and a constant observation interval of 3. How many ensemble members are need to capture the true state?}
+\subsubsection{Run the filter with various observation intervals and an ensemble size of 10. How long can we go between observations and still capture the truth?}
 
 %---------------------------------------------------------------------------------
 \subsection{Observed vs. Unobserved variables}
 
 Here we will investigate how the Ensemble Kalman Filter transfers information from observed to unobserved variables.
-In all exercises below, unless stated otherwise, use an observation interval $\tobs=3$ and ensemble size $N = 10$. 
+To turn off which variables are observed, change \texttt{obsx}, \texttt{obsy}, and \texttt{obsz}. 
+In all exercises below, unless stated otherwise, use an observation interval \texttt{tobs=1} and ensemble size \texttt{N=10}. 
+Try many different initial conditions for each case. 
 
-\subsubsection{Run the filter with observations only of $x$, only $y$, and only $z$ and $\tobs = 3$. Which observation(s) gives us the best results?} 
+\subsubsection{Run the filter with observations only of $x$, only $y$, and only $z$. Which observation(s) gives us the best results?} 
 
-\textbf{Results:}
-\begin{enumerate}
-\item You will have to do several experiments for each case to get an idea of which experiment yields the lowest errors. 
-\item We can see that the errors are all over the place, but in general we get the largest errors for observing $z$ alone. The reason is that the equation for $z$ (\ref{eq:z}) can't distinguish between $x$ and $y$ (i.e. they both influence the evolution of $z$ the same way.  In contrast, the equation for $y$ (\ref{eq:y}) gives different information about all three variables. 
-\item Thus, we see that some observables impact the assimilation better than others, and the amount of impact depends on how that variable relates to all the other variables in the assimilation.
-\end{enumerate}
+%\textbf{Results:}
+%We can see that the errors are all over the place, but in general we get the largest errors for observing $z$ alone. The reason is that the equation for $z$ (\ref{eq:z}) can't distinguish between $x$ and $y$ (i.e. they both influence the evolution of $z$ the same way.  In contrast, the equation for $y$ (\ref{eq:y}) gives different information about all three variables. 
+%Thus, we see that some observables impact the assimilation better than others, and the amount of impact depends on how that variable relates to all the other variables in the assimilation.
 
-\subsubsection{Run the filter with observations of $x$ and $y$ together, but not $z$, all with $\tobs=3$. Compare this to the case where only $z$ is observed. How good is the analysis of $z$ in each case?}  
 
-\textbf{Results:}
-\begin{enumerate}
-\item The analysis of $z$ is actually better when we don't observe it, but observe the two other variables, than when we observe it alone.
-\item Thus we see that there is immense power in the EnKF's covariance model -- observed variables give us valuable information about unobserved variables.
-\end{enumerate}
+\subsubsection{Run the filter with observations of $x$ and $y$ together, but not $z$. Compare this to the case where only $z$ is observed. How good is the analysis of $z$ in each case?}  
+
+%\textbf{Results:}
+%The analysis of $z$ is actually better when we don't observe it, but observe the two other variables, than when we observe it alone.
+%Thus we see that there is immense power in the EnKF's covariance model -- observed variables give us valuable information about unobserved variables.
 
 %---------------------------------------------------------------------------------
 \subsection{Multivariate versus Univariate Assimilation}
 
 A major advantage of four-dimensional assimilation algorithms like the EnKF is that they use the assimilating model to estimate the correlations between different model variables.
-To see the difference that this makes, we can manually force the inter-variable correlations in the EnKF covariance matrix to zero and see how this changes the analysis.
+To see the difference that this makes, we can manually force the inter-variable correlations in the EnKF covariance matrix to zero by setting \texttt{localize = 1}. 
 
-\subsubsection{Run the filter with \hl{localization}}  
-\hl{Add step needed to localize the assimilation variables.}
-\hl{Here keep $\tobs = 3$}
-\textbf{Results:}
-\begin{enumerate}
-\item Observing the whole state it really doesn't make much difference if we use the full $3\times3$ error covariance matrix or only the diagonal terms .
-\item However, if we only observe the partial state (in this case $(x,y)$, right column), the analysis is much better if we use the full ${\bf P}^f$ matrix (top right) versus the diagonalized matrix (bottom right).  Thus we see that neglecting covariance terms (so-called localization of the covariance matrix) can be really bad if we only have partial observations.  However, if lots of parts of the state are observed, we can often get away with neglecting covariances.  This is advantageous because it can really save computation time in big models.
-\end{enumerate}
+\subsubsection{Compare the effect of localization for analyses of $z$ when we observe only $x$ and $y$, for \texttt{tobs = 1,2,3,4,5}}  
 
-\subsubsection{Compare the effect of localization for analyses of $z$ when we observe only $x$ and $y$, for $tobs = 1,2,3,4,5$}  
-
-\textbf{Results:}
-\begin{enumerate}
-\item Evidently, somewhere between $\tobs=2$ and $\tobs = 3$ is starts to make a difference whether or not we use the diagonal covariance matrix.
-\end{enumerate}
+%\textbf{Results:}
+%Observing the whole state it really doesn't make much difference if we use the full $3\times3$ error covariance matrix or only the diagonal terms .
+%However, if we only observe the partial state (in this case $(x,y)$, right column), the analysis is much better if we use the full ${\bf P}^f$ matrix (top right) versus the diagonalized matrix (bottom right).  Thus we see that neglecting covariance terms (so-called localization of the covariance matrix) can be really bad if we only have partial observations.  However, if lots of parts of the state are observed, we can often get away with neglecting covariances.  This is advantageous because it can really save computation time in big models.
 
 
 %---------------------------------------------------------------------------------
@@ -56,15 +48,20 @@ To see the difference that this makes, we can manually force the inter-variable 
 
 In the real world, we often don't observe model variables themselves, but functions of the model variables.  
 Let's look at what happens in the Lorenz model when we observe  functions of the three variables.  
+This can be done by 
+setting 
+\begin{verbatim}
+obsx = 0
+obsy = 0
+obsz = 0
+obs_meanxy = 1
+obs_meanyz = 1
+obs_meanxz = 1
+\end{verbatim}
 
-\subsubsection{Run the filter with observations of mean($x,y$), mean($x$,$z$), and mean($y$,$z$)}
-\hl{Add option needed to observe means of the variables.}
+\subsubsection{Run the filter with observations of mean($x,y$), mean($x$,$z$), and mean($y$,$z$) and compare to observing the variables normally.}
+\subsubsection{Try assimilating observations of mean($x,y$), mean($x$,$z$), and mean($y$,$z$) for different observation intervals.}
 %
-\textbf{Results:}
-We can see that the EnKF is still robust -- the 10-member ensemble can capture the true state pretty well even though the variables are indirectly observed. 
+%\textbf{Results:}
+%The analysis looks a lot worse now -- even when we manage to fit the observations, the ensemble mean in between observation times doesn't look much like the truth. 
 
-
-\subsubsection{Run the filter with observations of mean($x,y$) only, and compare to observing $x$ and $y$ individually}
-%
-\textbf{Results:}
-Now we see that observing the mean yields a considerably worse analysis.  Thus we see that observing functions of model variables can work pretty well, but only if observational coverage is pretty good.

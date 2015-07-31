@@ -81,58 +81,65 @@ end
 xfens = squeeze(XENS(:,:,1));
 for k = 1:nT-1
 
-  % observations?
-  if (mod(t(k),tobs) == 0)
-    YOBS(:,k) = XT(:,k)+sig_obs*rand(3,1);
+	if E.run_filter	
+		% are there observations?
+		if (mod(t(k),tobs) == 0)
+			
+			% create observations of the true state 
+			YOBS(:,k) = H*XT(:,k)+H*sig_obs*rand(3,1);
 
-    % get the forecast error covariance matrix from the ensemble
-    D = zeros(3,N);
-    for iens = 1:N
-      D(:,iens) = xfens(iens,:) - mean(xfens,1);
-    end
-    Pf1 = (1/N)*D*D';
+			% get the forecast error covariance matrix from the ensemble
+			D = zeros(3,N);
+			for iens = 1:N
+				D(:,iens) = xfens(iens,:) - mean(xfens,1);
+			end
+			Pf1 = (1/N)*D*D';
 
-    % localize the covariance matrix?
-    if E.localize
-        Pf = eye(3).*Pf1;
-    else
-        Pf = Pf1;
-    end
+			% localize the covariance matrix?
+			if E.localize
+				Pf = eye(3).*Pf1;
+			else
+				Pf = Pf1;
+			end
 
-    % update the entire ensemble with the observations
-    K_bottom = H*Pf*H' + R;
-    K_top = H*Pf';
-    K = K_top * inv(K_bottom);
-    for iens = 1:N
-      XENS(iens,:,k) = xfens(iens,:)' + K*(YOBS(:,k) - H*xfens(iens,:)');
-    end
+			% update the entire ensemble with the observations
+			K_bottom = H*Pf*H' + R;
+			K_top = H*Pf';
+			K = K_top * inv(K_bottom);
+			for iens = 1:N
+				% for each ensemble member, create a perturbed observation vector
+				yens = YOBS(:,k)+H*sig_obs*rand(3,1);
+				XENS(iens,:,k) = xfens(iens,:)' + K*(yens - H*xfens(iens,:)');
+			end
 
-  else
-    % if no observation, then the forecast becomes the analysis
-    XENS(:,:,k) = xfens;
-  end
+		else
+			% if no observation, then the forecast becomes the analysis
+			XENS(:,:,k) = xfens;
+		end
+	else
+	    % if not running the filter, then the forecast is the analysis
+	    XENS(:,:,k) = xfens;
+	    end
 
-  % regardless of whether there's been an observation, the analysis error covariance matrix comes from the ensemble
-    D = zeros(3,N);
-    for iens = 1:N
-      D(:,iens) = XENS(iens,:,k) - mean(XENS(:,:,k),1);
-    end
-    Pa = (1/N)*D*D';
+
+	% regardless of whether there's been an observation, the analysis error covariance matrix comes from the ensemble
+	D = zeros(3,N);
+	for iens = 1:N
+	D(:,iens) = XENS(iens,:,k) - mean(XENS(:,:,k),1);
+	end
+	Pa = (1/N)*D*D';
  
+	% save the diagonals of the analysis error covariance matrix -- these are the variances
+	S(:,k) = diag(Pa);
 
-  % save the diagonals of the analysis error covariance matrix -- these are the variances
-  S(:,k) = diag(Pa);
+	% evolve the truth forward
+	XT(:,k+1) = lorenz63(XT(:,k), sigma, rho, beta, dt);
 
-
-  % evolve the truth forward
-  XT(:,k+1) = lorenz63(XT(:,k), sigma, rho, beta, dt);
-
-  % evolve the analysis ensemble forward to become the next forecast
-  xfens = zeros(N,3);
-  for iens = 1:N
-    xfens(iens,:)  = lorenz63(XENS(iens,:,k), sigma, rho, beta, dt);
-  end
-
+	% evolve the analysis ensemble forward to become the next forecast
+	xfens = zeros(N,3);
+	for iens = 1:N
+	xfens(iens,:)  = lorenz63(XENS(iens,:,k), sigma, rho, beta, dt);
+	end
 end
 
 %---------------PLOTTING----------------------------------
@@ -204,3 +211,6 @@ for ic = 1:3
 	str_out = strcat(names(ic),':	True Error = ',num2str(ET(ic),3),'  Estimated = ',num2str(EA(ic),3));
 	disp(str_out)
 end
+disp('average state error')
+str_out = strcat('True Error = ',num2str(mean(ETave),3),'	Estimated = ',num2str(mean(EAave),3));
+disp(str_out)
