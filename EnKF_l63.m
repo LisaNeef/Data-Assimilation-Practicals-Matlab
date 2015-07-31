@@ -151,19 +151,16 @@ for ic = 1:3
     end
     if ic == 3
 	    xlabel('time')
-	    legend(h, 'truth','analysis','Location','SouthOutside','Orientation','Horizontal')
+	    legend(h, 'true RMSE','estimated RMSE','Location','SouthOutside','Orientation','Horizontal')
     end
 end
 
-
-
-%% Export Plots
-%fig_name_1 = ['lorenz_EnKF_tobs',num2str(tobs),'_N',num2str(N),'.png'];
-%fig_name_2 = ['lorenz_EnKF_tobs',num2str(tobs),'_N',num2str(N),'_error.png'];
-%pw1 = 10;
-%ph1 = 10;
-%exportfig(1,fig_name_1,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
-%exportfig(2,fig_name_2,'width',pw1,'height',ph1,'format','png','color','cmyk','FontSize',1)
-
-
-
+% average the errors for each variable over the integration time, and print to the screent
+ETave = nanmean(ET,2);
+EAave = nanmean(EA,2);
+names = {'x','y','z'};
+disp('+++++++Assimilation Run Average Errors++++++++++')
+for ic = 1:3
+	str_out = strcat(names(ic),':	True Error = ',num2str(ET(ic),3),'  Estimated = ',num2str(EA(ic),3));
+	disp(str_out)
+end
