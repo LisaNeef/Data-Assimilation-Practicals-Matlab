@@ -21,9 +21,15 @@ xt0 	= E.xt0;
 xf0 	= E.xf0;
 sig0 	= E.sig0;
 sig_obs = E.sig_obs;
+obsx	= E.obsx;
+obsy	= E.obsy;
+obsz	= E.obsz;
 N 	= E.N;
 Tend 	= E.Tend;
 tobs 	= E.tobs;
+obs_meanxy	= E.obs_meanxy;
+obs_meanyz	= E.obs_meanyz;
+obs_meanxz	= E.obs_meanxz;
 
 %% Initialize arrays to hold everything
 t 	= 1:dt:Tend;
@@ -40,9 +46,36 @@ for iens = 1:N
   XENS(iens,:,1) = xf0 + sig0*randn(3,1);
 end
 
-%% Define other matrices needed in the assimilation
-H = eye(3);
+%% define the observation error covariance matrix  
 R = sig_obs*eye(3);
+
+%% define the observation operator, based on the desired obs configuration 
+H = zeros(3);
+if obsx, H(1,1) == 1; end
+if obsy, H(1,1) == 1; end
+if obsz, H(1,1) == 1; end
+
+% note that this code is not (yet) equipped to handle cases were we observe single obs AND 
+% averages -- throw an error in this case
+observe_averages = obs_meanxy+obs_meanyz+obs_meanxz;
+observe_single_variables = obsx+obsy+obsz;
+if (observe_averages > 0) && (observe_single_variables > 0)
+	error('Cannot observe both variable averages and single variables...please change the input file.')
+end
+if observe_averages > 0
+	if obs_meanxy
+		H(1,1) = 0.5;
+		H(1,2) = 0.5;
+	end
+	if obs_meanyz
+		H(2,2) = 0.5;
+		H(2,3) = 0.5;
+	end
+	if obs_meanxz
+		H(3,1) = 0.5;
+		H(3,3) = 0.5;
+	end
+end
 
 %% Loop in time
 xfens = squeeze(XENS(:,:,1));
