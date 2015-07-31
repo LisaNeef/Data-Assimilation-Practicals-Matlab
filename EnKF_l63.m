@@ -51,9 +51,9 @@ R = sig_obs*eye(3);
 
 %% define the observation operator, based on the desired obs configuration 
 H = zeros(3);
-if obsx, H(1,1) == 1; end
-if obsy, H(1,1) == 1; end
-if obsz, H(1,1) == 1; end
+if obsx, H(1,1) = 1; end
+if obsy, H(2,2) = 1; end
+if obsz, H(3,3) = 1; end
 
 % note that this code is not (yet) equipped to handle cases were we observe single obs AND 
 % averages -- throw an error in this case
@@ -90,7 +90,14 @@ for k = 1:nT-1
     for iens = 1:N
       D(:,iens) = xfens(iens,:) - mean(xfens,1);
     end
-    Pf = (1/N)*D*D';
+    Pf1 = (1/N)*D*D';
+
+    % localize the covariance matrix?
+    if E.localize
+        Pf = eye(3).*Pf1;
+    else
+        Pf = Pf1;
+    end
 
     % update the entire ensemble with the observations
     K_bottom = H*Pf*H' + R;

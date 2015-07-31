@@ -18,18 +18,19 @@ dt 	= 0.01;
 %% ASSIMILATION PARAMETERS
 sig0 	= 0.5;	% initial forecast error variance
 sig_obs	= 0.5;	% observation errror covariance
-N	= 50;	% ensemble size
+N	= 10;	% ensemble size
 Tend	= 30;	% total integration time
-tobs 	= 1.0;	% observation interval 
+tobs 	= 3.0;	% observation interval 
+localize = 1;	% set to 1 to use only the diagonals of the covariance matrix
 
 %% OBSERVATION SETTINGS
-obsx 	= 0;	% set to 1 to observe variable x
-obsy 	= 0;	% set to 1 to observe variable y
-obsz 	= 0;	% set to 1 to observe variable z
+obsx 	= 1;	% set to 1 to observe variable x
+obsy 	= 1;	% set to 1 to observe variable y
+obsz 	= 1;	% set to 1 to observe variable z
 
 obs_meanxy	= 0;	% set to 1 to observe the mean of x and y
 obs_meanyz	= 0;	% set to 1 to observe the mean of y and z
-obs_meanxz	= 1;	% set to 1 to observe the mean of x and z
+obs_meanxz	= 0;	% set to 1 to observe the mean of x and z
 
 %% INITIAL CONDITIONS
 xt0 = zeros(3,1);
@@ -59,5 +60,6 @@ E = struct('sigma',sigma,...
 		'sig_obs',sig_obs,...
 		'N',N,...
 		'Tend',Tend,...
+		'localize',localize,...
 		'tobs',tobs);
 		
