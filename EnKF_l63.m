@@ -1,4 +1,4 @@
-function enkf_l63(E)
+function A = enkf_l63(E)
 %% EnKF_l63.m
 %
 % Run the Lorenz 1963 model and 
@@ -9,6 +9,23 @@ function enkf_l63(E)
 % INPUT:
 %   E: a Matlab structure that holds all the model and assimilation
 %	parameters. It is generated using E = set_enkf_inputs
+%
+% OUTPUT:
+%   A: a Matlab structure that holds the truth,observed, and analysis values 
+% 	for the model variables x,y,and z 
+%		A.xt
+%		A.yt
+%		A.zt
+%		A.xo
+%		A.yo
+%		A.zo
+%		A.xa
+%		A.ya
+%		A.za
+%	as well as the average state error (i.e. the true error) 
+%		A.ETave
+%	and the average analysis (or estimated) error
+%		A.EAave
 %-----------------------------------------------------------
 
 
@@ -214,3 +231,17 @@ end
 disp('average state error')
 str_out = strcat('True Error = ',num2str(mean(ETave),3),'	Estimated = ',num2str(mean(EAave),3));
 disp(str_out)
+
+
+% pack everything into the output structure  
+A = struct('xt',XT(1,:),...
+	'yt',XT(2,:),...
+	'zt',XT(3,:),...
+	'xa',XA(1,:),...
+	'ya',XA(2,:),...
+	'za',XA(3,:),...
+	'xo',YOBS(1,:),...
+	'yo',YOBS(2,:),...
+	'zo',YOBS(3,:),...
+	'ETave',ETave,...
+	'EAave',EAave);
