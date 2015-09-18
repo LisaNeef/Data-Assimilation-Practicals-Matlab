@@ -13,7 +13,10 @@ We will use this model in a set of data assimilation experiments, with the follo
 	$\beta = 8/3$ 	& --a nondimensional wavenumber.
 \end{tabular}
 }
-\\
+
+
+%---------------------------------------------------------------------------------
+\subsection{Running the Lorenz model in Matlab}
 The Matlab program \texttt{EnKF\_l63.m} runs the Lorenz model forward given a set of initial conditions, along with a forecast ensemble. 
 It also runs an optional ensemble Kalman filter (EnKF) that assimilates regularly-spaced observations of some or all the model variables, but first we'll focus on the model.
 %
@@ -28,12 +31,36 @@ sets the input variables and parameters.
 The output, $E$, is a matlab structure that contains all the model and assimilation parameters needed to run the EnKF. 
 Now to run the model, type
 \begin{verbatim}
-> EnKF_l63(E)
+> A = EnKF_l63(E)
 \end{verbatim}
-Try runnning the model with a few different initial conditions (by re-running \texttt{set\_enkf\_inputs.m}) to get an idea of the overall behavior of the model. 
+
+
+The code produces a few plots that show the three model variables in time, comparing the truth and a model ensemble. 
+The output $A$ is a matlab structure that holds the truth, observed, and analysis (this will come later) of the three model variables, as well as a few other things (look at the first few lines of \texttt{EnKF\_l63.m} to see what they are).  
+
+Try runnning the model with a few different initial conditions (by re-running \texttt{set\_enkf\_inputs.m} or simply changing $E.xt0$) to get an idea of the overall behavior of the model. 
+You can plot the famous "Lorenz" butterfly by entering 
+\begin{verbatim}
+> plot3(A.xt,A.yt,A.zt) 
+\end{verbatim}
 You'll see that the Lorenz model, like the weather, is chaotic -- small changes in the initial conditions become huge changes down the line. 
 
-You'll see that the ensemble (gray) eventually separates so much from the truth that its mean (green) no longer looks like a typical state of the Lorenz model (i.e. it's no longer on the "strange attractor" of the model). 
+You'll also see that the ensemble (gray) eventually separates so much from the truth that its mean (green) no longer looks like a typical state of the Lorenz model (i.e. it's no longer on the "strange attractor" of the model). 
 If the Lorenz model was a model of the weather, taking the ensemble mean as a weather forecast would be a pretty bad idea -- not only would it be far from the truth, it wouldn't even be physical. 
 Fortunately, in the real world we have observations of the weather to correct our forecast models and bring them closer to the truth. 
 This will be illustrated in the next section. 
+
+%---------------------------------------------------------------------------------
+\subsection{True versus estimated error}
+
+\texttt{EnKF\_l63.m} doesn't just produce a model trajectory, but also a forecast ensemble. 
+The mean of this ensemble may be more or less close to the truth, but what the ensemble also tells us about is how certain or uncertain our forecast is. 
+But how well does the ensemble really represent what is going on?
+The output structure \texttt{A} contains two quantities that can help us answer this question:
+\begin{description}
+\item [\texttt{A.EAave}] is the time-averaged "analysis error" of the ensemble, i.e. error that we estimate using the ensemble standard deviation. 
+\item [\texttt{A.ETave}] is the root-mean-square \textit{true error}, that is, the difference between the truth and the ensemble mean.  
+\end{description}
+
+In a good ensemble prediction system (and later, ensemble filter), the ensemble spread should be similar to the true error. 
+In the exercises to follow, keep an eye-out for how well these two fit together. 
