@@ -22,7 +22,7 @@ sig_obs		= 0.5;	% observation errror covariance
 N		= 10;	% ensemble size
 Tend		= 30;	% total integration time
 tobs 		= 3.0;	% observation interval 
-localize 	= 1;	% set to 1 to use only the diagonals of the covariance matrix
+localize 	= 0;	% set to 1 to use only the diagonals of the covariance matrix
 
 %% OBSERVATION SETTINGS
 obsx 	= 1;	% set to 1 to observe variable x
