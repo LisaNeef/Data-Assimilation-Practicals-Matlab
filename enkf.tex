@@ -2,8 +2,12 @@
 %---------------------------------------------------------------------------------
 \subsection{How much information is needed to capture the right statistics?}
 
-Now turn on the EnKF assimilation by setting \texttt{run\_filter=1} in \texttt{set\_enkf\_inputs.m}. 
-Other settings in for the filter are explained in the comments of this program. 
+Now turn on the EnKF assimilation by setting \texttt{run\_filter=1} in \texttt{set\_enkf\_inputs.m}.
+Other settings for the filter are explained in the comments of \texttt{set\_enkf\_inputs.m}. 
+You can also change them directly in the structure, like (for example)
+\begin{verbatim}
+> E.run_filter = 1
+\end{verbatim}
 Here we will test different values of the observation interval (\texttt{tobs}) and ensemble size (\texttt{N}).
 
 \subsubsection{Run the filter with various ensemble sizes and a constant observation interval of 3. How many ensemble members are need to capture the true state?}
@@ -51,12 +55,12 @@ Let's look at what happens in the Lorenz model when we observe  functions of the
 This can be done by 
 setting 
 \begin{verbatim}
-obsx = 0
-obsy = 0
-obsz = 0
-obs_meanxy = 1
-obs_meanyz = 1
-obs_meanxz = 1
+E.obsx = 0
+E.obsy = 0
+E.obsz = 0
+E.obs_meanxy = 1
+E.obs_meanyz = 1
+E.obs_meanxz = 1
 \end{verbatim}
 
 \subsubsection{Run the filter with observations of mean($x,y$), mean($x$,$z$), and mean($y$,$z$) and compare to observing the variables normally.}
