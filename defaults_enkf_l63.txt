@@ -1,0 +1,23 @@
+
+
+%% assimilation parameters
+T = 10.0	% run length
+tobs = 3.0	% observation interval  
+N = 10		% ensemble size  
+
+%% error variances  
+sig0    = 0.5;  % initial forecast error variance
+sig_obs = 0.5;  % observation errror covariance
+
+%% Model Parameters
+sigma   = 10;
+rho     = 28;
+beta    = 8/3;
+dt      = 0.01;
+
+% initial true state
+xt0 = zeros(3,1);
+xt0(1) =  1.508870;
+xt0(2) = -1.531271;
+xt0(3) = 25.46091;
+
